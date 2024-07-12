@@ -23,6 +23,22 @@ class WeatherApiETL:
     
 
     def transform(self, data:dict, forecast_type:str)->dict:
+        if forecast_type == "weather":
+            repaired_data = {"Вологість": data.get("main").get("humidity"), 
+                             "Тиск": data.get("main").get("pressure"),
+                             "Температура": data.get("main").get("temp"),
+                             "Хмари": data.get("clouds").get("all") }
+            return repaired_data
+        elif forecast_type == "forecast":
+            date = data.get("list")[0].get("dt")
+            temp = data.get("list")[0].get("main").get("temp")
+            repaired_date = datetime.fromtimestamp(date).strftime("%d.%m.%y")
+            repaired_data = {"Дата": repaired_date,
+                             "Температура": temp,
+                            }
+            return repaired_data
+        else:
+            ...
         """
         forecast_type == weather (https://openweathermap.org/current)
         forecast_type == forecast (https://openweathermap.org/forecast5) 
