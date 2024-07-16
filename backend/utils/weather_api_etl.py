@@ -1,44 +1,45 @@
 from requests import get
+from datetime import datetime
 
 
 class WeatherApiETL:
     base_url: str = "http://api.openweathermap.org/data/2.5/"
 
-    def __init__(self, api_key:str):
+    def __init__(self, api_key: str):
         self.api_key = api_key
 
-    def __get_params(self, location, units:str = "metric"):
+    def __get_params(self, location, units: str = "metric"):
         return {
             "q": location,
             "appid": self.api_key,
             "units": units,
         }
 
-    def extract(self, location:str,  forecast_type:str)->dict:
+    def extract(self, location: str, forecast_type: str) -> dict:
         response = get(
             url=f"{self.base_url}{forecast_type}",
-            params=self.__get_params(location=location)
+            params=self.__get_params(location=location),
         )
         return response.json()
-    
 
-    def transform(self, data:dict, forecast_type:str)->dict:
+    def transform(self, data: dict, forecast_type: str) -> dict:
+        repaired_data = {}
         if forecast_type == "weather":
-            repaired_data = {"Вологість": data.get("main").get("humidity"), 
-                             "Тиск": data.get("main").get("pressure"),
-                             "Температура": data.get("main").get("temp"),
-                             "Хмари": data.get("clouds").get("all") }
-            return repaired_data
+            repaired_data = {
+                "Вологість": data.get("main", {}).get("humidity"),
+                "Тиск": data.get("main", {}).get("pressure"),
+                "Температура": data.get("main", {}).get("temp"),
+                "Хмари": data.get("clouds", {}).get("all"),
+            }
         elif forecast_type == "forecast":
-            date = data.get("list")[0].get("dt")
-            temp = data.get("list")[0].get("main").get("temp")
+            date = data.get("list", [])[0].get("dt")
+            temp = data.get("list", [])[0].get("main").get("temp")
             repaired_date = datetime.fromtimestamp(date).strftime("%d.%m.%y")
-            repaired_data = {"Дата": repaired_date,
-                             "Температура": temp,
-                            }
-            return repaired_data
-        else:
-            ...
+            repaired_data = {
+                "Дата": repaired_date,
+                "Температура": temp,
+            }
+        return repaired_data
         """
         forecast_type == weather (https://openweathermap.org/current)
         forecast_type == forecast (https://openweathermap.org/forecast5) 
@@ -99,6 +100,6 @@ class WeatherApiETL:
                         -> main -> temp | "Температура {temp}"
         """
         ...
-    
+
     # def load(self):
     #     ...
