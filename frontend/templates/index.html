@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <h1>Weather APP</h1>
+
+    <form action="" method="post">
+        <div class="mb-3">
+            <label for="location_input" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location_input"  placeholder="Enter your location..." required>
+        </div>
+        <div class="mb-3">
+            <button type="button" id="today_forecast_btn" class="btn btn-primary">Weather for today</button>
+            <button type="button" id="forecast5_btn" class="btn btn-primary">Weather for 5 days</button>
+        </div>
+    </form>
+
+    <div class="card" id="today_forecast" style="display:none; width: 18rem;">
+        <div class="card-header">
+          <h1 id="card-header-content"></h1>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Вологість: <span id="humidity"></span></li>
+          <li class="list-group-item">Температура: <span id="temp"></span></li>
+          <li class="list-group-item">Тиск: <span id="pressure"></span></li>
+          <li class="list-group-item">Хмари: <span id="clouds"></span></li>
+        </ul>
+    </div>
+    <div class="container">
+        <div id="forecast5" style="display: none; " class="carousel slide">
+            <div class="carousel-inner">
+               
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#forecast5" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#forecast5" data-bs-slide="next">
+            <span class="carousel-control-next-icon " aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    
+        
+    </div>
+{% endblock %}

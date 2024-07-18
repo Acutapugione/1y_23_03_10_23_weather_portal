@@ -1,6 +1,7 @@
 from . import (
-    auth, 
-    default, 
+    auth,
+    default,
     errors,
+    weather_old,
     weather,
 )

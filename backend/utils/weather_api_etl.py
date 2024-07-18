@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from requests import get
 from datetime import datetime
 
@@ -22,24 +24,27 @@ class WeatherApiETL:
         )
         return response.json()
 
-    def transform(self, data: dict, forecast_type: str) -> dict:
-        repaired_data = {}
+    def transform(self, data: dict, forecast_type: str) -> dict | list | None:
         if forecast_type == "weather":
-            repaired_data = {
-                "Вологість": data.get("main", {}).get("humidity"),
-                "Тиск": data.get("main", {}).get("pressure"),
-                "Температура": data.get("main", {}).get("temp"),
-                "Хмари": data.get("clouds", {}).get("all"),
+            return {
+                "humidity": data.get("main", {}).get("humidity"),
+                "temp": data.get("main", {}).get("temp"),
+                "pressure": data.get("main", {}).get("pressure"),
+                "clouds": data.get("clouds", {}).get("all"),
             }
         elif forecast_type == "forecast":
-            date = data.get("list", [])[0].get("dt")
-            temp = data.get("list", [])[0].get("main").get("temp")
-            repaired_date = datetime.fromtimestamp(date).strftime("%d.%m.%y")
-            repaired_data = {
-                "Дата": repaired_date,
-                "Температура": temp,
-            }
-        return repaired_data
+            repaired_data = []
+            for item in data.get("list", []):
+                date = item.get("dt")
+                temp = item.get("main").get("temp")
+                repaired_date = datetime.fromtimestamp(date).strftime("%d.%m.%y")
+                repaired_data.append(
+                    {
+                        "date": repaired_date,
+                        "temp": temp,
+                    }
+                )
+            return repaired_data
         """
         forecast_type == weather (https://openweathermap.org/current)
         forecast_type == forecast (https://openweathermap.org/forecast5) 

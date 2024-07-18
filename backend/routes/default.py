@@ -1,10 +1,14 @@
-from .. import app
+from flask import render_template
 
+from .. import app
 
 
 @app.get("/")
 def index():
-    return "index"
+    # print(app.config)
+    # exit()
+    return render_template("index.html")
+
 
 @app.get("/about")
 def about():
